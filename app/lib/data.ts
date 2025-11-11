@@ -16,12 +16,12 @@ export async function fetchRevenue() {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
 
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    console.log('Fetching revenue data...');
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const data = await sql<Revenue[]>`SELECT * FROM revenue`;
 
-    // console.log('Data fetch completed after 3 seconds.');
+    console.log('Data fetch completed after 3 seconds.');
 
     return data;
   } catch (error) {
@@ -61,7 +61,8 @@ export async function fetchCardData() {
          SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
          SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
          FROM invoices`;
-
+    //Promise.all hoặc Promise.allSettled: dùng để khởi tạo tất cả các yêu cầu một lúc
+    //Nhược điểm khi chỉ dựa vào mẫu JavaScript này: điều gì sẽ xảy ra nếu một yêu cầu dữ liệu chậm hơn tất cả các yêu cầu khác
     const data = await Promise.all([
       invoiceCountPromise,
       customerCountPromise,
@@ -161,6 +162,7 @@ export async function fetchInvoiceById(id: string) {
     }));
 
     return invoice[0];
+    
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch invoice.');
